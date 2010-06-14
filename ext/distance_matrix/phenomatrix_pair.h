@@ -50,32 +50,29 @@ public:
     // Specialty constructor just for Ruby. Allows Ruby to pass in
     PhenomatrixPair(Rice::Object predict_or_id, Rice::Object source_or_id)
     : s(create_phenomatrix_list(source_or_id)),
-      p(create_phenomatrix_stack(predict_or_id, s.back().id()))
+      p(create_phenomatrix_stack(predict_or_id))
     {
         cerr << "PhenomatrixPair RUBY CONSTRUCTOR " << this << endl;
         cerr << "s id is " << s.back().id() << endl;
         cerr << "p id is " << p.top().id() << endl;
-        cerr << "p source id is " << p.top().source_id() << endl;
     }
 #endif
-    PhenomatrixPair(uint id, PhenomatrixBase given_phenomatrix)
+    PhenomatrixPair(uint id, Phenomatrix given_phenomatrix)
     : s(create_phenomatrix_list(given_phenomatrix)),
-      p(create_phenomatrix_stack(id, given_phenomatrix.id()))
+      p(create_phenomatrix_stack(id))
     {
         cerr << "PhenomatrixPair (uint,Pb) CONSTRUCTOR " << this << endl;
         cerr << "s id is " << s.back().id() << endl;
         cerr << "p id is " << p.top().id() << endl;
-        cerr << "p source id is " << p.top().source_id() << endl;
     }
 
     PhenomatrixPair(uint id, uint given_id)
     : s(create_phenomatrix_list(given_id)),            // source species matrix
-      p(create_phenomatrix_stack(id, given_id))        // predict species matrix
+      p(create_phenomatrix_stack(id))        // predict species matrix
     {
         cerr << "PhenomatrixPair CONSTRUCTOR " << this << endl;
         cerr << "s id is " << s.back().id() << endl;
         cerr << "p id is " << p.top().id() << endl;
-        cerr << "p source id is " << p.top().source_id() << endl;
     }
 
     // Copy constructor
@@ -84,18 +81,16 @@ public:
         cerr << "PhenomatrixPair COPY CONSTRUCTOR " << this << " from " << &rhs << endl;
         cerr << "s id is " << s.back().id() << endl;
         cerr << "p id is " << p.top().id() << endl;
-        cerr << "p source id is " << p.top().source_id() << endl;
     }
 //
 //    static stack<Phenomatrix> copy_stack(const stack<Phenomatrix>& rhs) {
 //        cerr << "copy_stack " << &rhs << endl;
 //        cerr << "size: " << rhs.size() << endl;
 //        cerr << "top id: " << rhs.top().id() << endl;
-//        cerr << "top source id: " << rhs.top().source_id() << endl;
 //        return rhs;
 //    }
 //
-//    static list<PhenomatrixBase> copy_list(const list<PhenomatrixBase>& rhs) {
+//    static list<Phenomatrix> copy_list(const list<Phenomatrix>& rhs) {
 //        cerr << "copy_list " << &rhs << endl;
 //        cerr << "size: " << rhs.size() << endl;
 //        cerr << "back id: " << rhs.back().id() << endl;
@@ -126,55 +121,50 @@ protected:
 
 
     // Create the predict matrix stack
-    static stack<Phenomatrix> create_phenomatrix_stack(uint id, uint given_id) {
-        stack<Phenomatrix> new_stack; new_stack.push(Phenomatrix(id, given_id));
+    static stack<Phenomatrix> create_phenomatrix_stack(uint id) {
+        stack<Phenomatrix> new_stack; new_stack.push(Phenomatrix(id));
         return new_stack;
     }
 
     // Create the source matrix stack (well, actually a list)
-    static list<PhenomatrixBase> create_phenomatrix_list(uint id) {
-        list<PhenomatrixBase> new_list; new_list.push_back(PhenomatrixBase(id));
+    static list<Phenomatrix> create_phenomatrix_list(uint id) {
+        list<Phenomatrix> new_list; new_list.push_back(Phenomatrix(id));
         return new_list;
     }
-    static list<PhenomatrixBase> create_phenomatrix_list(const PhenomatrixBase& pb) {
-        list<PhenomatrixBase> new_list; new_list.push_back(pb);
+    static list<Phenomatrix> create_phenomatrix_list(const Phenomatrix& pb) {
+        list<Phenomatrix> new_list; new_list.push_back(pb);
         return new_list;
     }
     
 #ifdef RICE
-    static stack<Phenomatrix> create_phenomatrix_stack(Rice::Object predict_or_id, uint given_id) {
+    static stack<Phenomatrix> create_phenomatrix_stack(Rice::Object predict_or_id) {
         if (predict_or_id.is_a( rb_cFixnum ))
-            return create_phenomatrix_stack( from_ruby<uint>(predict_or_id), given_id );
+            return create_phenomatrix_stack( from_ruby<uint>(predict_or_id) );
 
         else if (predict_or_id.is_a( Rice::Data_Type<Phenomatrix>::klass() )) {
             stack<Phenomatrix> new_stack;
             new_stack.push( from_ruby<Phenomatrix>(predict_or_id) );
-
-            // Check that the predict matrix has the source matrix as a given
-            if (new_stack.top().source_id() != given_id)
-                throw Rice::Exception(rb_eArgError, "phenomatrix_pair.h: create_phenomatrix_stack: Source matrix does not match the source id given to the predict matrix");
-
             return new_stack;
 
         } else
           throw Rice::Exception(rb_eArgError, "phenomatrix_pair.h: create_phenomatrix_stack: Argument must be a Phenomatrix");  
     }
 
-    static list<PhenomatrixBase> create_phenomatrix_list(Rice::Object source_or_id) {
+    static list<Phenomatrix> create_phenomatrix_list(Rice::Object source_or_id) {
         if (source_or_id.is_a( rb_cFixnum ))
             return create_phenomatrix_list(from_ruby<uint>(source_or_id));
 
-        else if (source_or_id.is_instance_of(Rice::Data_Type<PhenomatrixBase>::klass())) {
-            list<PhenomatrixBase> new_list;
-            new_list.push_back(from_ruby<PhenomatrixBase>(source_or_id));
+        else if (source_or_id.is_instance_of(Rice::Data_Type<Phenomatrix>::klass())) {
+            list<Phenomatrix> new_list;
+            new_list.push_back(from_ruby<Phenomatrix>(source_or_id));
             return new_list;
             
         } else
-          throw Rice::Exception(rb_eArgError, "phenomatrix_pair.h: create_phenomatrix_list: Argument must be a PhenomatrixBase");
+          throw Rice::Exception(rb_eArgError, "phenomatrix_pair.h: create_phenomatrix_list: Argument must be a Phenomatrix");
     }
 #endif
 
-    list<PhenomatrixBase> s;
+    list<Phenomatrix> s;
     stack<Phenomatrix> p;
 };
 

@@ -51,15 +51,10 @@ void Init_distance_matrix() {
 
     Rice::Module rb_mFastknn = define_module("Fastknn");
 
-    Data_Type<PhenomatrixBase> rb_cPhenomatrixBase =
-            define_class_under<PhenomatrixBase>(rb_mFastknn, "PhenomatrixBase")
-            .define_constructor(Constructor<PhenomatrixBase,uint>())
-            .define_method("id", &PhenomatrixBase::id);
-
     Data_Type<Phenomatrix> rb_cPhenomatrix =
-            define_class_under<Phenomatrix, PhenomatrixBase>(rb_mFastknn, "Phenomatrix")
-            .define_constructor(Constructor<Phenomatrix, uint, uint>())
-            .define_method("source_id", &Phenomatrix::source_id);
+            define_class_under<Phenomatrix>(rb_mFastknn, "Phenomatrix")
+            .define_constructor(Constructor<Phenomatrix,uint>())
+            .define_method("id", &Phenomatrix::id);
 
     Data_Type<PhenomatrixPair> rb_cPhenomatrixPair =
             define_class_under<PhenomatrixPair>(rb_mFastknn, "PhenomatrixPair")

@@ -1,33 +1,39 @@
 #ifndef PHENOMATRIX_H_
 # define PHENOMATRIX_H_
 
-#include <string>
-#include <boost/lexical_cast.hpp>
-using std::string;
-using boost::lexical_cast;
+typedef unsigned int uint;
+#ifdef RICE
+# include <rice/Object.hpp>
+# include <rice/Data_Type.hpp>
+# include <rice/Constructor.hpp>
+#endif
+#include <map>
+#include <iostream>
+using std::map;
+using std::cerr;
+using std::cout;
+using std::endl;
 
-#include "phenomatrix_base.h"
 
-class Phenomatrix : public PhenomatrixBase {
+class Phenomatrix {
 public:
-    // id = predict species, given_id = source species
-    Phenomatrix(uint id, uint given_id) : PhenomatrixBase(id), given_id_(given_id) {
+
+    Phenomatrix(uint id) : id_(id) {
         cerr << "Phenomatrix CONSTRUCTOR " << this << endl;
     }
 
-    Phenomatrix(const Phenomatrix& rhs)
-    : PhenomatrixBase(rhs), given_id_(rhs.given_id_)
-    {
+    // Copy constructor
+    Phenomatrix(const Phenomatrix& rhs) : id_(rhs.id_) {
         cerr << "Phenomatrix COPY CONSTRUCTOR " << this << " from " << &rhs << endl;
     }
 
-    ~Phenomatrix() { cerr << "Phenomatrix DTOR " << this << endl;}
+    virtual ~Phenomatrix() { cerr << "Phenomatrix DTOR " << this << endl; }
 
-    // Get the source matrix id
-    uint source_id() const { return given_id_; }
+    uint id() const { return id_; }
+    
 protected:
+    uint id_;
 
-    uint given_id_;
 };
 
-#endif
+#endif // PHENOMATRIX_H_

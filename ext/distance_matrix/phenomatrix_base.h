@@ -1,5 +1,5 @@
-#ifndef PHENOMATRIX_BASE_H_
-# define PHENOMATRIX_BASE_H_
+#ifndef PHENOMATRIX_H_
+# define PHENOMATRIX_H_
 
 typedef unsigned int uint;
 #ifdef RICE
@@ -15,19 +15,19 @@ using std::cout;
 using std::endl;
 
 
-class PhenomatrixBase {
+class Phenomatrix {
 public:
 
     PhenomatrixBase(uint id) : id_(id) {
-        cerr << "PhenomatrixBase CONSTRUCTOR " << this << endl;
+        cerr << "Phenomatrix CONSTRUCTOR " << this << endl;
     }
 
     // Copy constructor
-    PhenomatrixBase(const PhenomatrixBase& rhs) : id_(rhs.id_) {
-        cerr << "PhenomatrixBase COPY CONSTRUCTOR " << this << " from " << &rhs << endl;
+    Phenomatrix(const PhenomatrixBase& rhs) : id_(rhs.id_) {
+        cerr << "Phenomatrix COPY CONSTRUCTOR " << this << " from " << &rhs << endl;
     }
 
-    virtual ~PhenomatrixBase() { cerr << "PhenomatrixBase DTOR " << this << endl; }
+    virtual ~Phenomatrix() { cerr << "Phenomatrix DTOR " << this << endl; }
 
     uint id() const { return id_; }
     
@@ -36,4 +36,4 @@ protected:
 
 };
 
-#endif // PHENOMATRIX_BASE_H_
+#endif // PHENOMATRIX_H_
