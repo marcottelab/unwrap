@@ -15,10 +15,6 @@ end
 $CPPFLAGS += " -DRICE"
 $CXXFLAGS += " -O0"
 
-$objs = [
-#  "distance_matrix.o",
-  "phenomatrix_pair.o",
-  "hypergeometric.o"]
-#  "fusion_phenomatrix.o"]
+$objs = ["phenomatrix_pair.o"]
 
 create_makefile('distance_matrix')

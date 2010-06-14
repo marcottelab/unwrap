@@ -8,11 +8,11 @@ using namespace Rice;
 
 Data_Type<PhenomatrixPair> phenomatrix_pair_type;
 
-template<>
-PhenomatrixPair from_ruby<PhenomatrixPair>(Rice::Object x) {
-    Rice::Data_Object<PhenomatrixPair> d(x, phenomatrix_pair_type);
-    return *d;
-}
+//template<>
+//PhenomatrixPair from_ruby<PhenomatrixPair>(Rice::Object x) {
+//    Rice::Data_Object<PhenomatrixPair> d(x, phenomatrix_pair_type);
+//    return *d;
+//}
 
 template <>
 Object to_ruby<set<uint> >(set<uint> const & d) {
@@ -43,26 +43,6 @@ Rice::Object to_ruby<map<uint, set<uint> > >(map<uint,set<uint> > const & d) {
 }
 
 
-template <>
-Object to_ruby<boost::unordered_map<uint, float> >(boost::unordered_map<uint, float> const & d) {
-    Hash h;
-    for (boost::unordered_map<uint, float>::const_iterator i = d.begin(); i != d.end(); ++i) {
-        h[to_ruby<uint>(i->first)] = to_ruby<float>(i->second);
-    }
-    return h;
-}
-
-
-// Convert from Rice::Array to std::set
-template <>
-boost::unordered_map<uint, float> from_ruby<boost::unordered_map<uint, float> >(Object x) {
-    Hash h(x);
-    boost::unordered_map<uint, float>  xmap;
-    for (Hash::iterator i = h.begin(); i != h.end(); ++i)
-        xmap[from_ruby<uint>(i->first)] = from_ruby<float>(i->second);
-    return xmap;
-}
-
 // IT IS CRITICAL THAT Rice:: TYPES LEAVE OFF THE NAMESPACE BEYOND THIS POINT!
 // Remember, this is extern "C", and C doesn't understand namespaces!
 // If you don't leave off the namespace, you'll get bizarre errors like "Can't convert from Hash to Rice::Hash."
@@ -85,8 +65,7 @@ void Init_distance_matrix() {
             define_class_under<PhenomatrixPair>(rb_mFastknn, "PhenomatrixPair")
             .define_constructor(Constructor<PhenomatrixPair, Object, Object>())
             .define_method("push_mask", &PhenomatrixPair::push_mask)
-            .define_method("pop_mask", &PhenomatrixPair::pop_mask)
-            .define_method("distance_function=", &PhenomatrixPair::set_distance_function);
+            .define_method("pop_mask", &PhenomatrixPair::pop_mask);
 }
 
 #endif

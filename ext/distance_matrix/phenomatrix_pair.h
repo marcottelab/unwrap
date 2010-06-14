@@ -31,7 +31,6 @@ using std::list;
 using std::stack;
 using std::cerr;
 using std::endl;
-#include "hypergeometric.h"
 #include "phenomatrix.h"
 
 #ifndef MATRIX_LIST_DEFINED
@@ -51,8 +50,7 @@ public:
     // Specialty constructor just for Ruby. Allows Ruby to pass in
     PhenomatrixPair(Rice::Object predict_or_id, Rice::Object source_or_id)
     : s(create_phenomatrix_list(source_or_id)),
-      p(create_phenomatrix_stack(predict_or_id, s.back().id())),
-      distance_function(switch_distance_function("hypergeometric"))
+      p(create_phenomatrix_stack(predict_or_id, s.back().id()))
     {
         cerr << "PhenomatrixPair RUBY CONSTRUCTOR " << this << endl;
         cerr << "s id is " << s.back().id() << endl;
@@ -62,8 +60,7 @@ public:
 #endif
     PhenomatrixPair(uint id, PhenomatrixBase given_phenomatrix)
     : s(create_phenomatrix_list(given_phenomatrix)),
-      p(create_phenomatrix_stack(id, given_phenomatrix.id())),
-      distance_function(switch_distance_function("hypergeometric"))
+      p(create_phenomatrix_stack(id, given_phenomatrix.id()))
     {
         cerr << "PhenomatrixPair (uint,Pb) CONSTRUCTOR " << this << endl;
         cerr << "s id is " << s.back().id() << endl;
@@ -73,8 +70,7 @@ public:
 
     PhenomatrixPair(uint id, uint given_id)
     : s(create_phenomatrix_list(given_id)),            // source species matrix
-      p(create_phenomatrix_stack(id, given_id)),       // predict species matrix
-      distance_function(switch_distance_function("hypergeometric"))
+      p(create_phenomatrix_stack(id, given_id))        // predict species matrix
     {
         cerr << "PhenomatrixPair CONSTRUCTOR " << this << endl;
         cerr << "s id is " << s.back().id() << endl;
@@ -84,7 +80,7 @@ public:
 
     // Copy constructor
     PhenomatrixPair(const PhenomatrixPair& rhs)
-    : s(rhs.s), p(rhs.p), distance_function(rhs.distance_function) {
+    : s(rhs.s), p(rhs.p) {
         cerr << "PhenomatrixPair COPY CONSTRUCTOR " << this << " from " << &rhs << endl;
         cerr << "s id is " << s.back().id() << endl;
         cerr << "p id is " << p.top().id() << endl;
@@ -126,29 +122,8 @@ public:
         return true;
     }
 
-
-#ifdef RICE
-
-    // Take a symbol, e.g., :hypergeometric, and use it to set the distance function.
-    void set_distance_function(Rice::Object dfn) {
-        distance_function = switch_distance_function( from_ruby<Rice::Symbol>(dfn).str() );
-    }
-#endif
-    
-    // Take a string, e.g., "hypergeometric", and use it to set the distance function.
-    void set_distance_function_str(const string& dfn) {
-        distance_function = switch_distance_function(dfn);
-    }
 protected:
 
-    // Returns a function pointer to a distance function based on a request made via
-    // a string.
-    static double (*switch_distance_function(const std::string& distance_measure))(size_t,size_t,size_t,size_t) {
-        std::map<std::string, double(*)(size_t,size_t,size_t,size_t)> choices;
-        choices["hypergeometric"] = &hypergeometric;
-
-        return choices[distance_measure];
-    }
 
     // Create the predict matrix stack
     static stack<Phenomatrix> create_phenomatrix_stack(uint id, uint given_id) {
@@ -201,9 +176,6 @@ protected:
 
     list<PhenomatrixBase> s;
     stack<Phenomatrix> p;
-
-    // Allow different distance functions to be subbed in.
-    double (*distance_function)(size_t, size_t, size_t, size_t);
 };
 
 #ifndef MATRIX_LIST_DEFINED
