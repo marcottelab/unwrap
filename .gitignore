@@ -4,3 +4,5 @@ Makefile
 nbproject
 tmp
 mkmf.log
+*.h~
+*.cpp~
