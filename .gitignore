@@ -1,0 +1,6 @@
+*.o
+*.so
+Makefile
+nbproject
+tmp
+mkmf.log
